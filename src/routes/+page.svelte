@@ -1,6 +1,7 @@
 <script lang="ts">
     const jsonTodos = localStorage.getItem("todos") || "";
     let parsed: any;
+    let search: string = "";
 
     if (jsonTodos !== "") {
         parsed = JSON.parse(jsonTodos);
@@ -21,7 +22,7 @@
     let author: string = "";
     let start: Date = new Date();
     let end: Date = new Date();
-    let completed: boolean = false;
+    let completed: number = 0;
 
 
     let editId: number = 0;
@@ -33,7 +34,7 @@
     let editAuthor: string = "";
     let editStart: Date;
     let editEnd: Date;
-    let editCompleted: boolean = false;
+    let editCompleted: number = 0;
 
     try {
         id = parsed[parsed.length - 1].id + 1;
@@ -45,6 +46,12 @@
     async function createTodo(event: SubmitEvent) {
         newDiv.hidden = true;
         event.preventDefault();
+        if (completed < 0) {
+            completed = 0;
+        }
+        else if (completed > 100) {
+            completed = 100;
+        }
 
         const todo = {
             "id": id,
@@ -67,7 +74,7 @@
         author = "";
         start = new Date();
         end = new Date();
-        completed = false;
+        completed = 0;
 
         id += 1;
 
@@ -165,13 +172,15 @@
 
 <section>
 	<h1>Todo list</h1>
+    <input type="text" bind:value={search} />
     <div class="app">
         <div class="todos">
             {#each parsed as todo}
+                {#if todo.title.includes(search) || search == ""}
                 <div class="todo">
                     <form on:submit|preventDefault={edit}>
                         <input type="hidden" name="id" value={todo.id} />
-                        <input type="checkbox" checked={todo.completed} disabled />
+                        <input type="range" value={todo.completed} disabled min="0" max="100" />
                         {todo.important + todo.urgent * 2 + 1}
                         <input type="text" value={todo.title} disabled />
                         <button type="submit">edit</button>
@@ -181,6 +190,7 @@
                         <button type="submit">delete</button>
                     </form>
                 </div>
+                {/if}
             {/each}
             <button on:click={newTodo} class="new">new</button>
         </div>
@@ -222,13 +232,13 @@
                 </p>
                 <p>
                     <label for="completed">completed:</label>
-                    <input type="checkbox" name="completed" bind:checked={completed}/>
+                    <input type="range" name="completed" bind:value={completed} min="0" max="100" />
                 </p>
                 <button type="submit">submit</button>
             </form>
         </div>
 
-        <div bind:this={editDiv} hidden>
+        <div class="editDiv" bind:this={editDiv} hidden>
             <button on:click={() => {editDiv.hidden = true}}>close</button>
             <form on:submit|preventDefault={submitChanges}>
                 <input type="hidden" bind:value={editId} />
@@ -266,7 +276,7 @@
                 </p>
                 <p>
                     <label for="completed">completed:</label>
-                    <input type="checkbox" name="completed" bind:checked={editCompleted}/>
+                    <input type="range" name="completed" bind:value={editCompleted} min="0" max="100" />
                 </p>
                 <button type="submit">confirm</button>
             </form>
@@ -280,6 +290,7 @@
 		flex-direction: column;
 		align-items: center;
 		flex: 0.6;
+        gap: 1vh;
 	}
 
 	h1 {
