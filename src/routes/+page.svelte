@@ -1,4 +1,5 @@
 <script lang="ts">
+    // Vergleich Funktion für das Sortieren
     function compare(a: any, b: any) {
         let comparison = 0;
         if ((a.important && !b.important && !b.urgent)|| (a.urgent && b.important && !b.urgent)) {
@@ -9,10 +10,12 @@
         return comparison;
     }
 
+    // Einlesen der Todos (im JSON-Format abgespeichert)
     const jsonTodos = localStorage.getItem("todos") || "";
     let parsed: any;
     let search: string = "";
 
+    // Hier wird garantiert, dass es immer etwas in der "parsed" Variabel gibt
     if (jsonTodos !== "") {
         parsed = JSON.parse(jsonTodos);
     }
@@ -54,10 +57,15 @@
     catch {
         id = 0;
     }
-
+    
+    // todo kreieren
     async function createTodo(event: SubmitEvent) {
         newDiv.hidden = true;
+
+        // Verhindert das Neuladen der Seite
         event.preventDefault();
+
+        // Validierung
         if (completed < 0) {
             completed = 0;
         }
@@ -75,6 +83,7 @@
             author.substr(0, 50);
         }
 
+        // Kreiert ein neues Todo-Objekt
         const todo = {
             "id": id,
             "title": title,
@@ -87,7 +96,8 @@
             "end": end,
             "completed": completed
         }
-
+        
+        // Setzt die Werte zurück
         title = "";
         description = "";
         important = false;
@@ -98,12 +108,15 @@
         end = new Date();
         completed = 0;
 
+        // Inkrementiert die ID für das nächste Todo
         id += 1;
 
-        parsed = [...parsed, todo]; // reassignment of the variable causes the html to rerender that component
-        
-        const result: string = JSON.stringify(parsed);
+        parsed = [...parsed, todo]; // Es muss so geschrieben sein, damit das HTML neu ladet
 
+        // Hier werden die Todos als Zeichenkette abgespeichert...
+        const result: string = JSON.stringify(parsed);
+        
+        // ... und hier im Lokalen Speicher
         localStorage.setItem("todos", result);
         // todoDiv.hidden = true;
 
@@ -118,9 +131,13 @@
     async function edit(event: SubmitEvent) {
         newDiv.hidden = true;
 
+        // Speichert die Daten des Formulars ab
         const formData = new FormData(event.target);
+
+        // Nimmt die ID des gewählten Todos
         editId = formData.get("id");
 
+        // Variablen für Editierung werden gesetzt
         for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].id == editId) {
                 editTitle = parsed[i].title;
@@ -143,7 +160,8 @@
         console.log(formData);
 
         console.log(parsed.sort(compare));
-
+        
+        // Validierung
         if (editCompleted < 0) {
             editCompleted = 0;
         }
@@ -160,7 +178,8 @@
         if (editAuthor.length > 50) {
             editAuthor.substr(0, 50);
         }
-
+        
+        // Gewähltes Todo überschreiben mit neuen Daten
         for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].id == editId) {
                 parsed[i].title = editTitle;
@@ -191,6 +210,7 @@
 
         const deleteId = formData.get("id");
         
+        // Ganzes JSON Object wird gelöscht...
         for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].id == deleteId) {
                 parsed.splice(i, 1);
@@ -200,6 +220,7 @@
 
         const result: string = JSON.stringify(parsed);
 
+        // ...und gespeichert
         localStorage.setItem("todos", result);
     }
 </script>
