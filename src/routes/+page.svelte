@@ -36,7 +36,7 @@
     let editCompleted: boolean = false;
 
     try {
-        id = parsed[parsed.length - 1]["id"] + 1;
+        id = parsed[parsed.length - 1].id + 1;
     }
     catch {
         id = 0;
@@ -113,6 +113,8 @@
         const formData = new FormData(event.target);
         console.log(formData);
 
+        console.log(parsed.sort((a, b) => (b.important + b.urgent * 2) - (a.important + a.urgent * 2)));
+
         for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].id == editId) {
                 parsed[i].title = editTitle;
@@ -170,6 +172,7 @@
                     <form on:submit|preventDefault={edit}>
                         <input type="hidden" name="id" value={todo.id} />
                         <input type="checkbox" checked={todo.completed} disabled />
+                        {todo.important + todo.urgent * 2 + 1}
                         <input type="text" value={todo.title} disabled />
                         <button type="submit">edit</button>
                     </form>
