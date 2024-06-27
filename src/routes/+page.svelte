@@ -1,4 +1,14 @@
 <script lang="ts">
+    function compare(a: any, b: any) {
+        let comparison = 0;
+        if ((a.important && !b.important && !b.urgent)|| (a.urgent && b.important && !b.urgent)) {
+            comparison = 1;
+        } else if ((b.important && !a.important && !a.urgent) || (b.urgent && a.important && !a.urgent)) {
+            comparison = -1;
+        }
+        return comparison;
+    }
+
     const jsonTodos = localStorage.getItem("todos") || "";
     let parsed: any;
     let search: string = "";
@@ -120,7 +130,7 @@
         const formData = new FormData(event.target);
         console.log(formData);
 
-        console.log(parsed.sort((a, b) => (b.important + b.urgent * 2) - (a.important + a.urgent * 2)));
+        console.log(parsed.sort(compare));
 
         for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].id == editId) {
