@@ -65,6 +65,16 @@
             completed = 100;
         }
 
+        if (title.length > 50) {
+            title.substr(0, 50);
+        }
+        if (description.length > 100) {
+            description.substr(0, 100);
+        }
+        if (author.length > 50) {
+            author.substr(0, 50);
+        }
+
         const todo = {
             "id": id,
             "title": title,
@@ -133,6 +143,23 @@
         console.log(formData);
 
         console.log(parsed.sort(compare));
+
+        if (editCompleted < 0) {
+            editCompleted = 0;
+        }
+        else if (editCompleted > 100) {
+            editCompleted = 100;
+        }
+
+        if (editTitle.length > 50) {
+            editTitle.substr(0, 50);
+        }
+        if (editDescription.length > 100) {
+            editDescription.substr(0, 100);
+        }
+        if (editAuthor.length > 50) {
+            editAuthor.substr(0, 50);
+        }
 
         for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].id == editId) {
@@ -256,15 +283,15 @@
 
         <div class="editDiv" bind:this={editDiv} hidden>
             <button on:click={() => {editDiv.hidden = true}}>close</button>
-            <form on:submit|preventDefault={submitChanges}>
+            <form on:submit|preventDefault={submitChanges} class="editTodo">
                 <input type="hidden" bind:value={editId} />
                 <p>
                     <label for="title">title:</label>
-                    <input type="text" name="title" bind:value={editTitle} required />
+                    <input type="text" name="title" bind:value={editTitle} maxlength="50" required />
                 </p>
                 <p>
                     <label for="description">description:</label>
-                    <input type="text" name="description" bind:value={editDescription} required />
+                    <input type="text" name="description" bind:value={editDescription} maxlength="100" required />
                 </p>
                 <p>
                     <label for="important">important:</label>
@@ -284,7 +311,7 @@
                 </p>
                 <p>
                     <label for="author">author:</label>
-                    <input type="text" name="author" bind:value={editAuthor} required />
+                    <input type="text" name="author" bind:value={editAuthor} maxlength="50" required />
                 </p>
                 <p>
                     <label for="start">start:</label>
@@ -324,6 +351,13 @@
         gap: 0.5vh;
     }
 
+    .editTodo {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5vh;
+    }
+
     p {
         gap: 0.5vh;
         width: 100%;
@@ -356,11 +390,13 @@
 
     .todo form {
         display: flex;
+        align-items: center;
         gap: 1vh;
     }
 
     .todo form button {
         width: 7vw;
+        height: 3vh;
     }
 
     .todos {
