@@ -20,6 +20,8 @@
         parsed = [];
     }
 
+    const categories = ["Unfiled", "Personal", "School", "Hobby", "Family"];
+
     let newDiv: HTMLDivElement;
     let editDiv: HTMLDivElement;
 
@@ -28,7 +30,7 @@
     let description: string = "";
     let important: boolean = false;
     let urgent: boolean = false;
-    let category: number = 0;
+    let category: string = "Unfiled";
     let author: string = "";
     let start: Date = new Date();
     let end: Date = new Date();
@@ -40,7 +42,7 @@
     let editDescription: string = "";
     let editImportant: boolean = false;
     let editUrgent: boolean = false;
-    let editCategory: number = 0;
+    let editCategory: string = "Unfiled";
     let editAuthor: string = "";
     let editStart: Date;
     let editEnd: Date;
@@ -80,7 +82,7 @@
         description = "";
         important = false;
         urgent = false;
-        category = 0;
+        category = "Unfiled";
         author = "";
         start = new Date();
         end = new Date();
@@ -190,7 +192,7 @@
                 <div class="todo">
                     <form on:submit|preventDefault={edit}>
                         <input type="hidden" name="id" value={todo.id} />
-                        <input type="range" value={todo.completed} disabled min="0" max="100" />
+                        {todo.completed}%
                         {todo.important + todo.urgent * 2 + 1}
                         <input type="text" value={todo.title} disabled />
                         <button type="submit">edit</button>
@@ -210,11 +212,11 @@
                 <input type="hidden" bind:value={id} />
                 <p>
                     <label for="title">title:</label>
-                    <input type="text" name="title" bind:value={title} required />
+                    <input type="text" name="title" bind:value={title} maxlength="50" required />
                 </p>
                 <p>
                     <label for="description">description:</label>
-                    <input type="text" name="description" bind:value={description} required />
+                    <input type="text" name="description" bind:value={description} maxlength="100" required />
                 </p>
                 <p>
                     <label for="important">important:</label>
@@ -226,11 +228,15 @@
                 </p>
                 <p>
                     <label for="category">category:</label>
-                    <input type="number" name="category" bind:value={category} required />
+                    <select name="category" bind:value={category}>
+                    {#each categories as cat}
+                        <option value={cat}>{cat}</option>
+                    {/each}
+                    </select>
                 </p>
                 <p>
                     <label for="author">author:</label>
-                    <input type="text" name="author" bind:value={author} required />
+                    <input type="text" name="author" bind:value={author} maxlength="50" required />
                 </p>
                 <p>
                     <label for="start">start:</label>
@@ -270,7 +276,11 @@
                 </p>
                 <p>
                     <label for="category">category:</label>
-                    <input type="number" name="category" bind:value={editCategory} required />
+                    <select name="category" bind:value={editCategory}>
+                    {#each categories as cat}
+                        <option value={cat}>{cat}</option>
+                    {/each}
+                    </select>
                 </p>
                 <p>
                     <label for="author">author:</label>
